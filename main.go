@@ -16,17 +16,21 @@ func main() {
 	// the csv cannot
 
 	var fp = flag.String("fp", "", "Pass in the filename and path (Required)")
-	var altnan = flag.String("altnan", "nan", "The default indicator of a missing number is nan but you can add your own string here (Optional)")
+	var altnan = flag.String("altnan", "nan", "The default indicator of a missing number is nan but "+
+		"you can add your own string here (Optional)")
+	var outfile = flag.String("outfile", "output.csv", "The default output file is called output.csv and is "+
+		"saved in the current directory add the path and filename if you want a different name and location (Optional)")
 	var help = flag.String("h", "", "Extended help")
 	flag.Parse()
 
-	if *fp == "" {
-		flag.PrintDefaults()
-		os.Exit(1)
-	}
+	//if *fp == "" {
+	//	flag.PrintDefaults()
+	//	os.Exit(1)
+	//}
 
 	fmt.Printf("flag command line:- %+v\n", *fp)
 	fmt.Printf("flag command line:- %+v\n", *altnan)
+	fmt.Printf("flag command line:- %+v\n", *outfile)
 	fmt.Printf("flag command line:- %+v\n", *help)
 
 	rows := readSample()
@@ -60,10 +64,10 @@ func appendSum(rows [][]string) {
 
 	// get the size of the array
 	// row
-	mr := len(rows)
+	mr := len(rows) - 1
 	fmt.Printf("max rows is:- %+v\n", mr)
 	// length of row all will be the same so just get the first one
-	lr := len(rows[0])
+	lr := len(rows[0]) - 1
 	fmt.Printf("length of row is:- %+v\n", lr)
 
 	// if the row/col is 0/0 then can only get right side and below
@@ -78,18 +82,127 @@ func appendSum(rows [][]string) {
 	// if the row/col is max depth/1-len-1 then above, left, right
 	// if the row/col is max depth/len then above, left
 
-	rows[0] = append(rows[0], "SUM")
-	for i := 0; i < len(rows); i++ {
-		for j := 0; j < len(rows[i]); j++ {
-			if rows[i][j] == "nan" {
-				fmt.Printf("hit a not a number %+v row is %+v and col is %+v\n", rows[i][j], i, j)
-				newVal := CalcAverage(1.1, 2.1, 3.1, 4.1)
-				fmt.Println(newVal)
+	//rows[0] = append(rows[0], "SUM")
+	for cr := 0; cr <= len(rows)-1; cr++ {
+		for cc := 0; cc <= len(rows[cr])-1; cc++ {
+			if rows[cr][cc] == "nan" {
+				fmt.Printf("hit a not a number %+v row is %+v and col is %+v\n", rows[cr][cc], cr, cc)
+				//newVal := CalcAverage(1.1, 2.1, 3.1, 4.1)
+				//fmt.Println(newVal)
 				// mr = max rows = the number of rows(calculated after reading in the file)
-				// rl = row length  (calculated after reading in the file)
+				// lr = row length  (calculated after reading in the file)
 				// cr = current row, pr = previous row, nr - next row
 				// cc = current column, pc = previous column, nc = next column
-				// if row == 0
+				if cr == 0 {
+					fmt.Printf("---------- current row (cr) is zero %+v and column is %+v\n", cr, cc)
+					if cc == 0 {
+						// cc + 1 & cr
+						// cr + 1 & cc
+						a1 := rows[cr][cc+1]
+						a2 := rows[cr+1][cc]
+						a164, _ := strconv.ParseFloat(a1, 64)
+						a264, _ := strconv.ParseFloat(a2, 64)
+						newVal := CalcAverage(a164, a264)
+						fmt.Printf("x--------- current row (cr) is zero %+v and column is %+v the avg is %+v\n", cr, cc, newVal)
+					} else if cc < lr {
+						// cc - 1 & cr
+						// cc + 1 & cr
+						// cr + 1 & cc
+						a1 := rows[cr][cc-1]
+						a2 := rows[cr][cc+1]
+						a3 := rows[cr+1][cc]
+						a164, _ := strconv.ParseFloat(a1, 64)
+						a264, _ := strconv.ParseFloat(a2, 64)
+						a364, _ := strconv.ParseFloat(a3, 64)
+						newVal := CalcAverage(a164, a264, a364)
+						fmt.Printf("x--------- current row (cr) is zero %+v and column is %+v the avg is %+v\n", cr, cc, newVal)
+					} else if cc == lr {
+						// cc - 1 & cr
+						// cr + 1 & cc
+						a1 := rows[cr][cc-1]
+						a2 := rows[cr+1][cc]
+						a164, _ := strconv.ParseFloat(a1, 64)
+						a264, _ := strconv.ParseFloat(a2, 64)
+						newVal := CalcAverage(a164, a264)
+						fmt.Printf("xx--------- current row (cr) is zero %+v and column is %+v the avg is %+v\n", cr, cc, newVal)
+					}
+				} else if cr < mr {
+					fmt.Printf("---------- current row (cr) is gt zero %+v but less than mr %+v and column is %+v\n", cr, mr, cc)
+					if cc == 0 {
+						// cc + 1 & cr
+						// cr - 1 & cc
+						// cr + 1 & cc
+						a1 := rows[cr][cc+1]
+						a2 := rows[cr-1][cc]
+						a3 := rows[cr+1][cc]
+						a164, _ := strconv.ParseFloat(a1, 64)
+						a264, _ := strconv.ParseFloat(a2, 64)
+						a364, _ := strconv.ParseFloat(a3, 64)
+						newVal := CalcAverage(a164, a264, a364)
+						fmt.Printf("x--------- current row (cr) is zero %+v and column is %+v the avg is %+v\n", cr, cc, newVal)
+					} else if cc < lr {
+						// cc - 1 & cr
+						// cc + 1 & cr
+						// cr - 1 & cc
+						// cr + 1 & cc
+						a1 := rows[cr][cc-1]
+						a2 := rows[cr][cc+1]
+						a3 := rows[cr-1][cc]
+						a4 := rows[cr+1][cc]
+						a164, _ := strconv.ParseFloat(a1, 64)
+						a264, _ := strconv.ParseFloat(a2, 64)
+						a364, _ := strconv.ParseFloat(a3, 64)
+						a464, _ := strconv.ParseFloat(a4, 64)
+						newVal := CalcAverage(a164, a264, a364, a464)
+						fmt.Printf("x--------- current row (cr) is zero %+v and column is %+v the avg is %+v\n", cr, cc, newVal)
+					} else if cc == lr {
+						// cc - 1 & cr
+						// cr - 1 & cc
+						// cr + 1 & cc
+						a1 := rows[cr][cc-1]
+						a2 := rows[cr-1][cc]
+						a3 := rows[cr+1][cc]
+						a164, _ := strconv.ParseFloat(a1, 64)
+						a264, _ := strconv.ParseFloat(a2, 64)
+						a364, _ := strconv.ParseFloat(a3, 64)
+						newVal := CalcAverage(a164, a264, a364)
+						fmt.Printf("x--------- current row (cr) is zero %+v and column is %+v the avg is %+v\n", cr, cc, newVal)
+					}
+				} else if cr == mr {
+					fmt.Printf("---------- current row (cr) %+v is == mr %+v and column is %+v\n", cr, mr, cc)
+					if cc == 0 {
+						// cc + 1 & cr
+						// cr - 1 & cc
+						a1 := rows[cr][cc+1]
+						a2 := rows[cr-1][cc]
+						a164, _ := strconv.ParseFloat(a1, 64)
+						a264, _ := strconv.ParseFloat(a2, 64)
+						newVal := CalcAverage(a164, a264)
+						fmt.Printf("x--------- current row (cr) is zero %+v and column is %+v the avg is %+v\n", cr, cc, newVal)
+					} else if cc < lr {
+						// cc - 1 & cr
+						// cc + 1 & cr
+						// cr + 1 & cc
+						a1 := rows[cr][cc-1]
+						a2 := rows[cr][cc+1]
+						a3 := rows[cr-1][cc]
+						a164, _ := strconv.ParseFloat(a1, 64)
+						a264, _ := strconv.ParseFloat(a2, 64)
+						a364, _ := strconv.ParseFloat(a3, 64)
+						newVal := CalcAverage(a164, a264, a364)
+						fmt.Printf("x--------- current row (cr) is zero %+v and column is %+v the avg is %+v\n", cr, cc, newVal)
+
+					} else if cc == lr {
+						// cc - 1 & cr
+						// cr + 1 & cc
+						a1 := rows[cr][cc-1]
+						a2 := rows[cr-1][cc]
+						a164, _ := strconv.ParseFloat(a1, 64)
+						a264, _ := strconv.ParseFloat(a2, 64)
+						newVal := CalcAverage(a164, a264)
+						fmt.Printf("x--------- current row (cr) is zero %+v and column is %+v the avg is %+v\n", cr, cc, newVal)
+					}
+				}
 				// if col is 0
 				// avg of row[cr,1] + row[nr,0]
 				// if 1 to rl-1
@@ -114,12 +227,12 @@ func appendSum(rows [][]string) {
 				//fmt.Println(rows[i][j])
 			}
 		}
-		fmt.Println("------------")
-		//fmt.Println(rows[i][0])
-		//fmt.Println("---")
-		//fmt.Println(len(rows))
-		rows[i] = append(rows[i], sum(rows[i]))
 	}
+	fmt.Println("------------")
+	//fmt.Println(rows[i][0])
+	//fmt.Println("---")
+	//fmt.Println(len(rows))
+	//rows[cr] = append(rows[cr], sum(rows[cr]))
 }
 
 func CalcAverage(nums ...float64) float64 {
@@ -127,14 +240,15 @@ func CalcAverage(nums ...float64) float64 {
 	//fmt.Println(len(nums))
 	var total float64
 	for _, num := range nums {
+		fmt.Println(num)
 		total += num
 	}
 	//fmt.Println(total)
 	totavg := total / float64(len(nums))
 
-	fmt.Printf("the numbers passed was %+v\n", len(nums))
-	fmt.Printf("the total was %+v\n", total)
-	fmt.Printf("the average is %+v\n", totavg)
+	fmt.Printf("-- the numbers passed was %+v\n", len(nums))
+	fmt.Printf("-- the total was %+v\n", total)
+	fmt.Printf("-- the average is %+v\n", totavg)
 
 	return totavg
 }
