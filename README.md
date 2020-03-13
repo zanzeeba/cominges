@@ -19,9 +19,11 @@ Unit tests can be run go test -v
 Assuming compiled to main then
 
 ./main -h
+
 will give you the command line parameters the only required one i -fp which is the filepath and file name for the input data
 
 ./main -fp=./input_data/input_test_data.csv
+
 will run to the output file
 
 ## testing
