@@ -40,3 +40,6 @@ there are several csv files in a subdirectory input_data for you to use
 
 
 input_test_data.csv is the primary file for testing
+
+# Versioning
+Tried out adding semantic versioning
